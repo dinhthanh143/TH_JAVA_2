@@ -1,0 +1,109 @@
+public class StudentManager {
+    private Student[] danhSach;
+    private int soLuong;
+
+    public StudentManager(int size) {
+        danhSach = new Student[size];
+        soLuong = 0;
+    }
+
+    public boolean them(Student s) {
+        if (soLuong == danhSach.length) return false;
+        if (timTheoMa(s.getMaSV()) != null) return false;
+        danhSach[soLuong++] = s;
+        return true;
+    }
+
+    public void hienThiTatCa() {
+        System.out.printf("%-10s %-20s %-5s %-10s %-6s %-12s\n",
+                "MaSV", "HoTen", "Tuoi", "GioiTinh", "DTB", "XepLoai");
+        for (int i = 0; i < soLuong; i++) {
+            danhSach[i].hienThi();
+        }
+    }
+
+    public Student timTheoMa(String ma) {
+        for (int i = 0; i < soLuong; i++) {
+            if (danhSach[i].getMaSV().equalsIgnoreCase(ma))
+                return danhSach[i];
+        }
+        return null;
+    }
+
+    public void timTheoTen(String key) {
+        boolean found = false;
+        for (int i = 0; i < soLuong; i++) {
+            if (danhSach[i].getHoTen().toLowerCase().contains(key.toLowerCase())) {
+                danhSach[i].hienThi();
+                found = true;
+            }
+        }
+        if (!found) System.out.println("Khong tim thay");
+    }
+
+    public boolean xoa(String ma) {
+        for (int i = 0; i < soLuong; i++) {
+            if (danhSach[i].getMaSV().equalsIgnoreCase(ma)) {
+                for (int j = i; j < soLuong - 1; j++) {
+                    danhSach[j] = danhSach[j + 1];
+                }
+                soLuong--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void sapXepTheoDTB() {
+        for (int i = 0; i < soLuong - 1; i++) {
+            for (int j = 0; j < soLuong - i - 1; j++) {
+                if (danhSach[j].getDiemTB() < danhSach[j + 1].getDiemTB()) {
+                    Student tmp = danhSach[j];
+                    danhSach[j] = danhSach[j + 1];
+                    danhSach[j + 1] = tmp;
+                }
+            }
+        }
+    }
+
+    public void sapXepTheoTen() {
+        for (int i = 0; i < soLuong - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < soLuong; j++) {
+                if (danhSach[j].getHoTen().compareToIgnoreCase(danhSach[min].getHoTen()) < 0)
+                    min = j;
+            }
+            Student tmp = danhSach[i];
+            danhSach[i] = danhSach[min];
+            danhSach[min] = tmp;
+        }
+    }
+
+    public void thongKe() {
+        int gioi = 0, kha = 0, tb = 0, yeu = 0;
+        double tong = 0;
+        Student max = danhSach[0];
+        Student min = danhSach[0];
+
+        for (int i = 0; i < soLuong; i++) {
+            tong += danhSach[i].getDiemTB();
+            if (danhSach[i].getDiemTB() > max.getDiemTB()) max = danhSach[i];
+            if (danhSach[i].getDiemTB() < min.getDiemTB()) min = danhSach[i];
+
+            switch (danhSach[i].getXepLoai()) {
+                case "Gioi": gioi++; break;
+                case "Kha": kha++; break;
+                case "Trung binh": tb++; break;
+                default: yeu++;
+            }
+        }
+
+        System.out.println("Gioi: " + gioi);
+        System.out.println("Kha: " + kha);
+        System.out.println("Trung binh: " + tb);
+        System.out.println("Yeu: " + yeu);
+        System.out.printf("DTB chung: %.2f\n", tong / soLuong);
+        System.out.print("Cao nhat: "); max.hienThi();
+        System.out.print("Thap nhat: "); min.hienThi();
+    }
+}
